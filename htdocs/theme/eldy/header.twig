@@ -1,0 +1,10 @@
+{% if conf.global.MAIN_ACTIVATE_HTML5 %}
+<!doctype html>
+{% else %}
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+{% endif %}
+<html lang="{{ langs.defaultlang[:2] }}" {% if conf.global.MAIN_USE_CACHE_MANIFEST %}manifest="{{ constant('DOL_URL_ROOT') }}/cache.manifest"{% endif %}>
+{% if not disablehead %}
+    {% include 'head.twig' %}
+{% endif %}
+

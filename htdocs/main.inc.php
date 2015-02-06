@@ -903,6 +903,12 @@ if (! function_exists("llxHeader"))
 	{
 	    global $conf;
 
+	    $ref = new ReflectionFunction(__FUNCTION__);
+	    foreach( $ref->getParameters() as $param) {
+	        $name = $param->name;
+	        $data[$name]=$$name;
+	    }
+	     
 	    // html header
 		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
@@ -954,18 +960,28 @@ function top_httphead()
  */
 function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
 {
-    global $user, $conf, $langs, $db;
+    global $user, $conf, $langs, $db, $twig;
 
     top_httphead();
 
     if (empty($conf->css)) $conf->css = '/theme/eldy/style.css.php';	// If not defined, eldy by default
-
-    if (empty($conf->global->MAIN_ACTIVATE_HTML5)) {
+    
+    //We convert function's parameter for pass it to Twig
+    $ref = new ReflectionFunction(__FUNCTION__);
+    foreach( $ref->getParameters() as $param) {
+        $name = $param->name;
+        $data[$name]=$$name;
+    }
+    
+    if (GETPOST('dol_basehref')) $data['dol_basehref']=dol_escape_htmltag(GETPOST('dol_basehref'));
+    
+/*    if (empty($conf->global->MAIN_ACTIVATE_HTML5)) {
         $doctype = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
     }else {
         $doctype = '<!doctype html>'; // Html5 - Developement - Only available on Eldy template
     }
     print $doctype."\n";
+
     if (! empty($conf->global->MAIN_USE_CACHE_MANIFEST)) print '<html lang="'.substr($langs->defaultlang,0,2).'" manifest="'.DOL_URL_ROOT.'/cache.manifest">'."\n";
     else print '<html lang="'.substr($langs->defaultlang,0,2).'">'."\n";
     //print '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">'."\n";
@@ -974,7 +990,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         print "<head>\n";
 		if (GETPOST('dol_basehref')) print '<base href="'.dol_escape_htmltag(GETPOST('dol_basehref')).'">'."\n";
         // Displays meta
-        print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
+      print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
         print '<meta name="author" content="Dolibarr Development Team">'."\n";
 		if (! empty($conf->global->MAIN_ACTIVATE_HTML5)) print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";	// Needed for Responsive Web Design
         $favicon=dol_buildpath('/theme/'.$conf->theme.'/img/favicon.ico',1);
@@ -984,15 +1000,18 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
         if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="author" title="Dolibarr Development Team" href="http://www.dolibarr.org">'."\n";
 
-        // Displays title
+       // Displays title
         $appli='Dolibarr';
         if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
 
-        if ($title && ! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/noapp/',$conf->global->MAIN_HTML_TITLE)) print '<title>'.dol_htmlentities($title).'</title>';
-        if ($title) print '<title>'.dol_htmlentities($appli.' - '.$title).'</title>';
-        else print "<title>".dol_htmlentities($appli)."</title>";
+        if ($title && ! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/noapp/',$conf->global->MAIN_HTML_TITLE)) 
+            print '<title>'.dol_htmlentities($title).'</title>';
+        if ($title) 
+            print '<title>'.dol_htmlentities($appli.' - '.$title).'</title>';
+        else 
+            print "<title>".dol_htmlentities($appli)."</title>";
         print "\n";
-
+*/ 
         $ext='';
         if (! empty($conf->dol_use_jmobile)) $ext='version='.urlencode(DOL_VERSION);
         if (GETPOST('version')) $ext='version='.GETPOST('version','int');	// usefull to force no cache on css/js
@@ -1278,12 +1297,12 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             }
         }
 
-        if (! empty($head)) print $head."\n";
+/*        if (! empty($head)) print $head."\n";
         if (! empty($conf->global->MAIN_HTML_HEADER)) print $conf->global->MAIN_HTML_HEADER."\n";
 
         print "</head>\n\n";
     }
-
+*/
     $conf->headerdone=1;	// To tell header was output
 }
 
@@ -1865,3 +1884,16 @@ if (! function_exists("llxFooter"))
     }
 }
 
+/**
+ * Wrapper to twig->render just for calling top_httphead()
+ * 
+ * @param string $templatename  Name of template to render
+ * @param array $data           Local data for template (User, Conf, Langs are already available in template)
+ */
+function dol_render($templatename,$data) {
+    global $twig;
+    
+    top_httphead();
+    if (GETPOST('dol_basehref')) $data['dol_basehref']=dol_escape_htmltag(GETPOST('dol_basehref'));
+    echo $twig->render($templatename,$data);
+}

@@ -1,0 +1,17 @@
+<head>
+{% if dol_basehref %}<base href="{{ dol_basehref }}">{% endif %}
+<meta name="robots" content="noindex,nofollow">
+<meta name="author" content="Dolibarr Development Team">
+{% if conf.global.MAIN_ACTIVATE_HTML5 %}
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% endif %}
+<link rel="shortcut icon" type="image/x-icon" href="{{ conf.global.MAIN_FAVICON_URL|default(buildpath('/theme/'~ conf.theme ~ '/img/favicon.ico',1)) }}"/>
+{% if not conf.global.MAIN_OPTIMIZEFORTEXTBROWSER  %}
+<link rel="top" title="{{ "Home"|trans }}" href="{{ constant('DOL_URL_ROOT')|default("/") }}">
+<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">
+<link rel="author" title="Dolibarr Development Team" href="http://www.dolibarr.org">
+{% endif %}
+<title>{{ conf.global.MAIN_APPLICATION_TITLE|default('Dolibarr') }}{% if title %} - {{ title }}{% endif %}</title>
+{{ head }}
+{{ conf.global.MAIN_HTML_HEADER }}
+</head>

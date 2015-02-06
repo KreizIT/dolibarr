@@ -501,7 +501,8 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
  */
 function accessforbidden($message='',$printheader=1,$printfooter=1,$showonlymessage=0)
 {
-    global $conf, $db, $user, $langs;
+    global $conf,$langs;
+    
     if (! is_object($langs))
     {
         include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
@@ -510,6 +511,16 @@ function accessforbidden($message='',$printheader=1,$printfooter=1,$showonlymess
 
     $langs->load("errors");
 
+    //We convert function's parameter for pass it to Twig
+    $ref = new ReflectionFunction(__FUNCTION__);
+    foreach( $ref->getParameters() as $param) {
+        $name = $param->name;
+        $data[$name]=$$name;
+    }
+
+    dol_render('forbidden.twig',$data);
+    
+    /*
     if ($printheader)
     {
         if (function_exists("llxHeader")) llxHeader('');
@@ -532,7 +543,7 @@ function accessforbidden($message='',$printheader=1,$printfooter=1,$showonlymess
             print $langs->trans("ErrorForbidden3");
         }
     }
-    if ($printfooter && function_exists("llxFooter")) llxFooter();
+    if ($printfooter && function_exists("llxFooter")) llxFooter();*/
     exit(0);
 }
 

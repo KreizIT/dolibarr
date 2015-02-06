@@ -1,0 +1,22 @@
+{% if printheader %}
+    {% include 'header.twig' %} 
+{% endif %}
+<div class="error">
+{% if message %}
+    {{ message }}
+{% else %}
+    {{ "ErrorForbidden"|trans }}
+{% endif %}
+</div>
+<br>
+{% if not showonlymessage %}
+    {% if user.login %}
+        {{ "CurrentLogin"|trans }}: <font class="error">{{ user.login }}</font><br>
+        {{ "ErrorForbidden2"|trans("Home"|trans,"Users"|trans) }}
+    {% else %}
+        {{ "ErrorForbidden3"|trans }}
+    {% endif %}
+{% endif %}
+{% if printfooter %}
+    {% include 'footer.twig' %}
+{% endif %}

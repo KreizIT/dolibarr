@@ -10,7 +10,8 @@
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
- *
+ * Copyright (C) 2015       Cedric Gross		<c.gross@kreiz-it.fr>
+ * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -33,7 +34,7 @@
  */
 
 require_once 'filefunc.inc.php';	// May have been already require by main.inc.php. But may not by scripts.
-
+require_once DOL_DOCUMENT_ROOT.'/../vendor/autoload.php';
 
 
 /*
@@ -248,4 +249,25 @@ if (! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR','NPR')
 
 // We force FPDF
 if (! empty($dolibarr_pdf_force_fpdf)) $conf->global->MAIN_USE_FPDF=$dolibarr_pdf_force_fpdf;
+
+// We initialize template manager
+
+$loader = new Twig_Loader_Filesystem(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme);
+$twig = new Twig_Environment($loader, array(
+    'cache' => DOL_DATA_ROOT.'/compilation_cache',
+    'debug' => true
+));
+$twig->addExtension(new Twig_Extension_Debug());
+$twig->addGlobal('conf', $conf);
+$twig->addGlobal('langs', $langs);
+$twig->addGlobal('user', $user);
+//twig filter for translation
+$filter = new Twig_SimpleFilter('trans', function ($context, $string,$p1="",$p2="",$p3="",$p4="") {
+    /*var_dump($context);*/
+    $lng=$context["langs"];
+    return $lng->trans($string,$p1,$p2,$p3,$p4);
+}, array('needs_context' => true,'is_safe'=>array('html')));
+$twig->addFilter($filter);
+//twig filter for build path
+$twig->addFunction(new Twig_SimpleFunction('buildpath', 'dol_buildpath'));
 
