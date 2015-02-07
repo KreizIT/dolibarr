@@ -12,6 +12,149 @@
 <link rel="author" title="Dolibarr Development Team" href="http://www.dolibarr.org">
 {% endif %}
 <title>{{ conf.global.MAIN_APPLICATION_TITLE|default('Dolibarr') }}{% if title %} - {{ title }}{% endif %}</title>
+{% if not disablejs %}
+    <!-- Includes CSS for JQuery (Ajax library) -->
+    {% if  constant('JS_JQUERY_UI') %}
+    <link rel="stylesheet" type="text/css" href="{{ constant('JS_JQUERY_UI') }}css/{{ jquerytheme }}/jquery-ui.min.css{{ ext }}" />
+    {% else %}
+    <link rel="stylesheet" type="text/css" href="{{ constant('DOL_URL_ROOT') }}/includes/jquery/css/{{ jquerytheme }}/jquery-ui-latest.custom.css{{ ext }}" />
+    {% endif %}
+    <link rel="stylesheet" type="text/css" href="{{ constant('DOL_URL_ROOT') }}/includes/jquery/plugins/tiptip/tipTip.css{{ ext }}" />
+    <link rel="stylesheet" type="text/css" href="{{ constant('DOL_URL_ROOT') }}/includes/jquery/plugins/jnotify/jquery.jnotify-alt.min.css{{ ext }}" />
+    {% if jquery_datatables %}
+        <link rel="stylesheet" type="text/css" href="{{ constant('DOL_URL_ROOT') }}/includes/jquery/plugins/datatables/css/jquery.dataTables_jui.css{{ ext }}" />
+        <link rel="stylesheet" type="text/css" href="{{ constant('DOL_URL_ROOT') }}/includes/jquery/plugins/datatables/extras/ColReorder/css/ColReorder.css{{ ext }}" />
+        <link rel="stylesheet" type="text/css" href="{{ constant('DOL_URL_ROOT') }}/includes/jquery/plugins/datatables/extras/ColVis/css/ColVis.css{{ ext }}" />
+        <link rel="stylesheet" type="text/css" href="{{ constant('DOL_URL_ROOT') }}/includes/jquery/plugins/datatables/extras/TableTools/css/TableTools.css{{ ext }}" />
+    {% endif %}
+    {% if jquery_multiselect %}
+        <link rel="stylesheet" type="text/css" href="{{ constant('DOL_URL_ROOT') }}/includes/jquery/plugins/{{ jquery_multiselect }}/{{ jquery_multiselect }}.css{{ ext }}" />
+    {% endif %}
+    {% if  jquery_timepicker %}
+        <link rel="stylesheet" type="text/css" href="{{ constant('DOL_URL_ROOT') }}/includes/jquery/plugins/timepicker/jquery-ui-timepicker-addon.css{{ ext }}" />
+    {% endif %}
+    {% if jquery_mobile%}
+        <link rel="stylesheet" type="text/css" href="{{ constant('DOL_URL_ROOT') }}/includes/jquery/plugins/mobile/jquery.mobile-latest.min.css{{ ext }}" />
+    {% endif %}
+{% endif %}
+<!-- Includes CSS for Dolibarr theme -->
+<link rel="stylesheet" type="text/css" title="default" href="{{ css_href }}">
+{% block CSS %}
+{% for module,href in css %}
+<!-- Includes CSS added by module {{ module }} -->
+<link rel="stylesheet" type="text/css" title="default" href="{{ href }}">
+{% else %}
+
+{% endfor %}
+{% endblock %}
+{% if not disablejs %}
+    <!-- Includes JS for JQuery -->
+    {% if constant('JS_JQUERY') %}
+        <script type="text/javascript" src="{{ constant('JS_JQUERY') }}jquery.min.js{{ ext }}"></script>
+    {% else %}
+        <script type="text/javascript" src="{{ constant('DOL_URL_ROOT') }}/includes/jquery/js/jquery-latest.min.js{{ ext }}"></script>
+    {% endif %}
+    {% if  constant('JS_JQUERY_UI') %}
+        <script type="text/javascript" src="{{ constant('JS_JQUERY_UI') }}jquery-ui.min.js{{ ext }}"></script>
+    {% else %}
+        <script type="text/javascript" src="{{ constant('DOL_URL_ROOT') }}/includes/jquery/js/jquery-ui-latest.custom.min.js{{ ext }}"></script>
+    {% endif %}
+    <script type="text/javascript" src="{{ constant('DOL_URL_ROOT') }}/includes/jquery/plugins/tablednd/jquery.tablednd.0.6.min.js{{ ext }}"></script>
+    <script type="text/javascript" src="{{ constant('DOL_URL_ROOT') }}/includes/jquery/plugins/tiptip/jquery.tipTip.min.js{{ ext }}"></script>
+    {% if jquery_mobile %}
+        <script type="text/javascript" src="{{ constant('DOL_URL_ROOT') }}/includes/jquery/plugins/layout/jquery.layout-latest.js{{ ext }}"></script>
+    {% endif %}
+    {% if  jquery_notify %}
+        <script type="text/javascript" src="{{ constant('DOL_URL_ROOT') }}/includes/jquery/plugins/jnotify/jquery.jnotify.min.js{{ ext }}"></script>
+        <script type="text/javascript" src="{{ constant('DOL_URL_ROOT') }}/core/js/jnotify.js{{ ext }}"></script>
+    {% endif %}
+    {% if jquery_blockui %}
+        <script type="text/javascript" src="{{ constant('DOL_URL_ROOT') }}/includes/jquery/plugins/blockUI/jquery.blockUI.js{{ ext }}"></script>
+        <script type="text/javascript">
+        var indicatorBlockUI = '{{ constant('DOL_URL_ROOT') }}/theme/{{ conf.theme }}/img/working2.gif';
+        </script>
+        <script type="text/javascript" src="{{ constant('DOL_URL_ROOT') }}/core/js/blockUI.js{{ ext }}"></script>
+    {% endif %}
+    {% if jquery_flot %}
+        {% if constant('JS_JQUERY_FLOT') %}
+                    <script type="text/javascript" src="'.JS_JQUERY_FLOT.'jquery.flot.js{{ ext }}"></script>
+                    <script type="text/javascript" src="'.JS_JQUERY_FLOT.'jquery.flot.pie.js{{ ext }}"></script>
+                    <script type="text/javascript" src="'.JS_JQUERY_FLOT.'jquery.flot.stack.js{{ ext }}"></script>
+        {% else %}
+                   <script type="text/javascript" src="{{ constant('DOL_URL_ROOT') }}/includes/jquery/plugins/flot/jquery.flot.min.js{{ ext }}"></script>
+                   <script type="text/javascript" src="{{ constant('DOL_URL_ROOT') }}/includes/jquery/plugins/flot/jquery.flot.pie.min.js{{ ext }}"></script>
+                   <script type="text/javascript" src="{{ constant('DOL_URL_ROOT') }}/includes/jquery/plugins/flot/jquery.flot.stack.min.js{{ ext }}"></script>
+        {% endif %}
+    {% endif %}
+    {% if jquery_editable %}
+                    <script type="text/javascript" src="{{ constant('DOL_URL_ROOT') }}/includes/jquery/plugins/jeditable/jquery.jeditable.min.js{{ ext }}"></script>
+                <script type="text/javascript" src="{{ constant('DOL_URL_ROOT') }}/includes/jquery/plugins/jeditable/jquery.jeditable.ui-datepicker.js{{ ext }}"></script>
+                <script type="text/javascript" src="{{ constant('DOL_URL_ROOT') }}/includes/jquery/plugins/jeditable/jquery.jeditable.ui-autocomplete.js{{ ext }}"></script>
+                <script type="text/javascript">
+                var urlSaveInPlace = '{{ constant('DOL_URL_ROOT') }}/core/ajax/saveinplace.php';
+                var urlLoadInPlace = '{{ constant('DOL_URL_ROOT') }}/core/ajax/loadinplace.php';
+                var tooltipInPlace = '{{ 'ClickToEdit'|trans }}';
+                var placeholderInPlace = '{{ 'ClickToEdit'|trans }}';
+                var cancelInPlace = '{{ 'Cancel'|trans }}';
+                var submitInPlace = '{{ 'Ok'|trans }}';
+                var indicatorInPlace = '<img src="{{ constant('DOL_URL_ROOT') }}/theme/{{ conf.theme }}/img/working.gif">';
+                </script>
+                <script type="text/javascript" src="{{ constant('DOL_URL_ROOT') }}/core/js/editinplace.js{{ ext }}"></script>
+                <script type="text/javascript" src="{{ constant('DOL_URL_ROOT') }}/includes/jquery/plugins/jeditable/jquery.jeditable.ckeditor.js{{ ext }}"></script>
+    {% endif %}
+    {% if jquery_datatables %}
+                    <script type="text/javascript" src="{{ constant('DOL_URL_ROOT') }}/includes/jquery/plugins/datatables/js/jquery.dataTables.min.js{{ ext }}"></script>
+                <script type="text/javascript" src="{{ constant('DOL_URL_ROOT') }}/includes/jquery/plugins/datatables/extras/ColReorder/js/ColReorder.min.js{{ ext }}"></script>
+                <script type="text/javascript" src="{{ constant('DOL_URL_ROOT') }}/includes/jquery/plugins/datatables/extras/ColVis/js/ColVis.min.js{{ ext }}"></script>
+                <script type="text/javascript" src="{{ constant('DOL_URL_ROOT') }}/includes/jquery/plugins/datatables/extras/TableTools/js/TableTools.min.js{{ ext }}"></script>
+    {% endif %}
+    {% if jquery_timepicker %}
+                	<script type="text/javascript" src="{{ constant('DOL_URL_ROOT') }}/includes/jquery/plugins/timepicker/jquery-ui-timepicker-addon.js{{ ext }}"></script>
+            	<script type="text/javascript" src="{{ constant('DOL_URL_ROOT') }}/core/js/timepicker.js.php?lang='.$langs->defaultlang.($ext?'&amp;'.$ext:'').'"></script>
+    {% endif %}
+    {% if jquery_multiselect %}
+    <script type="text/javascript" src="{{ constant('DOL_URL_ROOT') }}/includes/jquery/plugins/{{ jquery_multiselect }}/{{ jquery_multiselect }}.js{{ ext }}"></script>
+    {% endif %}
+    {% if jquery_mobile%}
+        {% if jquery_mobile == 1 %}
+            <script type="text/javascript">
+	            		$(document).bind("mobileinit", function(){
+           				$.extend(  $.mobile , {
+           					autoInitializePage : true,	/* We need this to run jmobile */
+           					/* loadingMessage : \'xxxxx\', */
+           					touchOverflowEnabled : true,
+           					defaultPageTransition : 'none',
+           					defaultDialogTransition : 'none',
+           					ajaxEnabled : false			/* old param was ajaxFormsEnabled and ajaxLinksEnabled */
+           					});
+           				});
+	          </script>      
+        {% else %}
+        <script type="text/javascript" src="{{ constant('DOL_URL_ROOT') }}/includes/jquery/plugins/mobile/jquery.mobile-latest.min.js{{ ext }}"></script>
+        {% endif %}
+    {% endif %}
+    {% if ckeditor %}
+    <!-- Includes JS for CKEditor -->
+    <script type="text/javascript">';
+    var CKEDITOR_BASEPATH = '{{ ckeditor.path }}';
+    var ckeditorConfig = '{{ ckeditor.config }}';
+    var ckeditorFilebrowserBrowseUrl = '{{ constant('DOL_URL_ROOT') }}/core/filemanagerdol/browser/default/browser.php?Connector={{ constant('DOL_URL_ROOT') }}/core/filemanagerdol/connectors/php/connector.php';
+    var ckeditorFilebrowserImageBrowseUrl = '{{ constant('DOL_URL_ROOT') }}/core/filemanagerdol/browser/default/browser.php?Type=Image&Connector={{ constant('DOL_URL_ROOT') }}/core/filemanagerdol/connectors/php/connector.php';
+    </script>
+    <script type="text/javascript" src="{{ ckeditor.src }}{{ ext }}"></script>
+    {% endif %}
+    <!-- Includes JS of Dolibarr -->
+    <script type="text/javascript" src="{{ constant('DOL_URL_ROOT') }}/core/js/lib_head.js{{ ext }}"></script>
+    <script type="text/javascript" src="{{ constant('DOL_URL_ROOT') }}/core/js/datepicker.js.php{{ ext }}{% if ext %}&amp;{% else %}?{% endif %}lang={{ langs.defaultlang }}"></script>
+
+    {% block js %}
+    {% for module,href in jsext %}
+    <!-- Include JS added by module {{ module }}-->
+    <script type="text/javascript" src="{{ href }}"></script>
+    {% else %}
+    {% endfor %}
+    {% endblock %}
+{% endif %}    
 {{ head }}
 {{ conf.global.MAIN_HTML_HEADER }}
 </head>
